@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PetCareUpdated;
 use App\Models\Pet;
 use App\Models\Team;
 use Illuminate\Http\RedirectResponse;
@@ -44,7 +45,13 @@ class PetController extends Controller
      */
     public function feed(Team $currentTeam, Pet $pet): RedirectResponse
     {
-        $this->incrementCareLevel($currentTeam, $pet, 'calorie_level');
+        $pet = $this->incrementCareLevel($currentTeam, $pet, 'calorie_level');
+
+        broadcast(new PetCareUpdated(
+            petId: $pet->id,
+            calorieLevel: $pet->calorie_level,
+            attentionLevel: $pet->attention_level,
+        ));
 
         return back();
     }
@@ -54,7 +61,13 @@ class PetController extends Controller
      */
     public function pet(Team $currentTeam, Pet $pet): RedirectResponse
     {
-        $this->incrementCareLevel($currentTeam, $pet, 'attention_level');
+        $pet = $this->incrementCareLevel($currentTeam, $pet, 'attention_level');
+
+        broadcast(new PetCareUpdated(
+            petId: $pet->id,
+            calorieLevel: $pet->calorie_level,
+            attentionLevel: $pet->attention_level,
+        ));
 
         return back();
     }
@@ -62,9 +75,9 @@ class PetController extends Controller
     /**
      * Increment one of the pet's care counters.
      */
-    private function incrementCareLevel(Team $team, Pet $pet, string $column): void
+    private function incrementCareLevel(Team $team, Pet $pet, string $column): Pet
     {
-        DB::transaction(function () use ($team, $pet, $column): void {
+        return DB::transaction(function () use ($team, $pet, $column): Pet {
             $pet = $team->pets()
                 ->whereKey($pet->id)
                 ->lockForUpdate()
@@ -73,6 +86,8 @@ class PetController extends Controller
             $pet->update([
                 $column => min(100, $pet->{$column} + 10),
             ]);
+
+            return $pet;
         });
     }
 }
