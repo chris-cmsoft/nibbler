@@ -42,14 +42,10 @@ watch(
     },
 );
 
-useEcho<PetCareUpdated>(
-    `pets.${props.pet.id}`,
-    'PetCareUpdated',
-    (event) => {
-        care.calorieLevel = event.calorieLevel;
-        care.attentionLevel = event.attentionLevel;
-    },
-);
+useEcho<PetCareUpdated>(`pets.${props.pet.id}`, 'PetCareUpdated', (event) => {
+    care.calorieLevel = event.calorieLevel;
+    care.attentionLevel = event.attentionLevel;
+});
 
 function progressWidth(value: number): string {
     return `${Math.min(100, Math.max(0, value))}%`;
