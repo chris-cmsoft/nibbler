@@ -1,7 +1,14 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid, PawPrint } from 'lucide-vue-next';
+import {
+    BookOpen,
+    FolderGit2,
+    LayoutGrid,
+    PawPrint,
+    Store,
+} from 'lucide-vue-next';
 import { computed } from 'vue';
+import { index as adoptionsIndex } from '@/actions/App/Http/Controllers/AdoptionController';
 import { index as petsIndex } from '@/actions/App/Http/Controllers/PetController';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -30,6 +37,12 @@ const petsUrl = computed(() =>
     page.props.currentTeam ? petsIndex(page.props.currentTeam.slug).url : '/',
 );
 
+const adoptionsUrl = computed(() =>
+    page.props.currentTeam
+        ? adoptionsIndex(page.props.currentTeam.slug).url
+        : '/',
+);
+
 const mainNavItems = computed<NavItem[]>(() => [
     {
         title: 'Dashboard',
@@ -40,6 +53,11 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: 'Pets',
         href: petsUrl.value,
         icon: PawPrint,
+    },
+    {
+        title: 'Adoptions',
+        href: adoptionsUrl.value,
+        icon: Store,
     },
 ]);
 

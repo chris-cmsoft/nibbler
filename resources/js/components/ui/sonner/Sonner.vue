@@ -12,9 +12,11 @@ const { appearance } = useAppearance();
         class="toaster group"
         position="bottom-right"
         :style="{
-            '--normal-bg': 'var(--popover)',
+            '--normal-bg':
+                'color-mix(in oklch, var(--popover) 88%, oklch(0.685 0.169 237.323) 12%)',
             '--normal-text': 'var(--popover-foreground)',
-            '--normal-border': 'var(--border)',
+            '--normal-border':
+                'color-mix(in oklch, var(--border) 70%, oklch(0.685 0.169 237.323) 30%)',
         }"
     />
 </template>

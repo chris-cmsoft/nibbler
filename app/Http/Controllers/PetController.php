@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Events\PetCareUpdated;
+use App\Events\PetReturned;
 use App\Models\Pet;
 use App\Models\Team;
+use App\Support\PetPayload;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Vite;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,20 +25,7 @@ class PetController extends Controller
                 ->with('animal')
                 ->orderBy('name')
                 ->get()
-                ->map(fn (Pet $pet) => [
-                    'id' => $pet->id,
-                    'name' => $pet->name,
-                    'birthday' => $pet->birthday->toDateString(),
-                    'calorieLevel' => $pet->calorie_level,
-                    'attentionLevel' => $pet->attention_level,
-                    'animal' => [
-                        'name' => $pet->animal->name,
-                        'caloriesPerDay' => $pet->animal->calories_per_day,
-                        'attentionPoints' => $pet->animal->attention_points,
-                        'svgPath' => $pet->animal->svg_path,
-                        'svgUrl' => Vite::asset($pet->animal->svg_path),
-                    ],
-                ]),
+                ->map(fn (Pet $pet) => PetPayload::fromPet($pet)),
         ]);
     }
 
@@ -67,6 +56,30 @@ class PetController extends Controller
             petId: $pet->id,
             calorieLevel: $pet->calorie_level,
             attentionLevel: $pet->attention_level,
+        ));
+
+        return back();
+    }
+
+    /**
+     * Return the given pet from the team.
+     */
+    public function destroy(Request $request, Team $currentTeam, Pet $pet): RedirectResponse
+    {
+        $pet = $currentTeam->pets()
+            ->whereKey($pet->id)
+            ->firstOrFail();
+
+        $petId = $pet->id;
+        $petName = $pet->name;
+
+        $pet->delete();
+
+        broadcast(new PetReturned(
+            teamId: $currentTeam->id,
+            petId: $petId,
+            actorName: $request->user()->name,
+            petName: $petName,
         ));
 
         return back();
