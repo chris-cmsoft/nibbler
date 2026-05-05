@@ -3,10 +3,14 @@
 namespace Tests\Feature\Pets;
 
 use App\Enums\TeamRole;
+use App\Events\PetCareUpdated;
 use App\Models\Pet;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Event;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -59,6 +63,8 @@ class PetCareTest extends TestCase
 
     public function test_feed_increments_calories_by_ten(): void
     {
+        Event::fake([PetCareUpdated::class]);
+
         [$user, $team] = $this->userAndTeam();
         $pet = Pet::factory()->for($team)->create(['calorie_level' => 50]);
 
@@ -69,6 +75,9 @@ class PetCareTest extends TestCase
         $response->assertRedirect();
 
         $this->assertSame(60, $pet->fresh()->calorie_level);
+        Event::assertDispatched(PetCareUpdated::class, fn (PetCareUpdated $event) => $event->petId === $pet->id
+            && $event->calorieLevel === 60
+            && $event->attentionLevel === $pet->attention_level);
     }
 
     public function test_feed_caps_calories_at_one_hundred(): void
@@ -85,6 +94,8 @@ class PetCareTest extends TestCase
 
     public function test_pet_increments_stimulation_by_ten(): void
     {
+        Event::fake([PetCareUpdated::class]);
+
         [$user, $team] = $this->userAndTeam();
         $pet = Pet::factory()->for($team)->create(['attention_level' => 50]);
 
@@ -95,6 +106,43 @@ class PetCareTest extends TestCase
         $response->assertRedirect();
 
         $this->assertSame(60, $pet->fresh()->attention_level);
+        Event::assertDispatched(PetCareUpdated::class, fn (PetCareUpdated $event) => $event->petId === $pet->id
+            && $event->calorieLevel === $pet->calorie_level
+            && $event->attentionLevel === 60);
+    }
+
+    public function test_team_members_can_authorize_pet_private_channels(): void
+    {
+        $this->useReverbBroadcasting();
+
+        [$user, $team] = $this->userAndTeam();
+        $pet = Pet::factory()->for($team)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->post('/broadcasting/auth', [
+                'socket_id' => '1234.5678',
+                'channel_name' => "private-pets.{$pet->id}",
+            ]);
+
+        $response->assertOk();
+    }
+
+    public function test_non_team_members_cannot_authorize_pet_private_channels(): void
+    {
+        $this->useReverbBroadcasting();
+
+        $user = User::factory()->create();
+        $pet = Pet::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->post('/broadcasting/auth', [
+                'socket_id' => '1234.5678',
+                'channel_name' => "private-pets.{$pet->id}",
+            ]);
+
+        $response->assertForbidden();
     }
 
     public function test_pet_caps_stimulation_at_one_hundred(): void
@@ -135,5 +183,16 @@ class PetCareTest extends TestCase
         $user->switchTeam($team);
 
         return [$user, $team];
+    }
+
+    private function useReverbBroadcasting(): void
+    {
+        Config::set('broadcasting.default', 'reverb');
+        Config::set('broadcasting.connections.reverb.key', 'testing-key');
+        Config::set('broadcasting.connections.reverb.secret', 'testing-secret');
+        Config::set('broadcasting.connections.reverb.app_id', 'testing-app');
+
+        Broadcast::forgetDrivers();
+        Broadcast::channel('pets.{pet}', fn (User $user, Pet $pet): bool => $user->teams()->whereKey($pet->team_id)->exists());
     }
 }
