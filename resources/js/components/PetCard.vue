@@ -59,11 +59,19 @@ useEcho<PetCareUpdated>(`pets.${props.pet.id}`, 'PetCareUpdated', (event) => {
 });
 
 function calorieProgressWidth(value: number): string {
+    if (props.pet.animal.caloriesPerDay <= 0) {
+        return '0%';
+    }
+
     return `${Math.min(100, Math.max(0, (value / props.pet.animal.caloriesPerDay) * 100))}%`;
 }
 
 function stimulationProgressWidth(value: number): string {
     return `${Math.min(100, Math.max(0, value))}%`;
+}
+
+function formatCalories(value: number): string {
+    return value.toFixed(1);
 }
 </script>
 
@@ -99,7 +107,7 @@ function stimulationProgressWidth(value: number): string {
                             class="text-muted-foreground"
                             data-test="pet-calories"
                         >
-                            {{ care.calorieLevel }} /
+                            {{ formatCalories(care.calorieLevel) }} /
                             {{ pet.animal.caloriesPerDay }}
                         </span>
                     </div>

@@ -23,7 +23,7 @@ class PetFactory extends Factory
             'team_id' => Team::factory(),
             'animal_id' => Animal::factory(),
             'name' => fake()->firstName(),
-            'calorie_level' => fake()->numberBetween(0, 300),
+            'calorie_level' => fake()->randomFloat(4, 0, 300),
             'attention_level' => fake()->numberBetween(0, 100),
             'birthday' => fake()->dateTimeBetween('-2 years')->format('Y-m-d'),
         ];

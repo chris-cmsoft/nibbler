@@ -54,7 +54,7 @@ class FeedPet implements ShouldQueue
 
             broadcast(new PetCareUpdated(
                 petId: $pet->id,
-                calorieLevel: $pet->calorie_level,
+                calorieLevel: (float) $pet->calorie_level,
                 attentionLevel: $pet->attention_level,
             ));
         }
@@ -77,7 +77,7 @@ class FeedPet implements ShouldQueue
             }
 
             $pet->update([
-                'calorie_level' => min($pet->animal->calories_per_day, $pet->calorie_level + 1),
+                'calorie_level' => round(min($pet->animal->calories_per_day, $pet->calorie_level + 1), 4),
             ]);
 
             return $pet;

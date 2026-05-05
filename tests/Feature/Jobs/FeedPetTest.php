@@ -34,10 +34,10 @@ class FeedPetTest extends TestCase
 
         (new FeedPet($pet->id, calories: 3, durationSeconds: 0))->handle();
 
-        $this->assertSame(53, $pet->fresh()->calorie_level);
+        $this->assertSame(53.0, $pet->fresh()->calorie_level);
         Event::assertDispatchedTimes(PetCareUpdated::class, 3);
         Event::assertDispatched(PetCareUpdated::class, fn (PetCareUpdated $event) => $event->petId === $pet->id
-            && $event->calorieLevel === 53
+            && $event->calorieLevel === 53.0
             && $event->attentionLevel === 25);
     }
 
@@ -50,7 +50,7 @@ class FeedPetTest extends TestCase
 
         (new FeedPet($pet->id, calories: 10, durationSeconds: 0))->handle();
 
-        $this->assertSame(120, $pet->fresh()->calorie_level);
+        $this->assertSame(120.0, $pet->fresh()->calorie_level);
     }
 
     public function test_feed_pet_exits_when_the_pet_has_been_returned(): void

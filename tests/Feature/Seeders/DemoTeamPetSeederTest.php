@@ -31,7 +31,7 @@ class DemoTeamPetSeederTest extends TestCase
         $pet = Pet::with('animal')->whereBelongsTo($team)->sole();
 
         $this->assertSame('Nibble', $pet->name);
-        $this->assertSame(50, $pet->calorie_level);
+        $this->assertSame(50.0, $pet->calorie_level);
         $this->assertSame(50, $pet->attention_level);
         $this->assertSame('mouse', $pet->animal->slug);
     }

@@ -77,7 +77,7 @@ class PetCareTest extends TestCase
 
         $response->assertRedirect();
 
-        $this->assertSame(50, $pet->fresh()->calorie_level);
+        $this->assertSame(50.0, $pet->fresh()->calorie_level);
         Queue::assertPushed(FeedPet::class, fn (FeedPet $job) => $job->petId === $pet->id
             && $job->calories === 100
             && $job->durationSeconds === 60);
@@ -94,7 +94,7 @@ class PetCareTest extends TestCase
             ->actingAs($user)
             ->post(route('pets.feed', ['current_team' => $team, 'pet' => $pet]));
 
-        $this->assertSame(95, $pet->fresh()->calorie_level);
+        $this->assertSame(95.0, $pet->fresh()->calorie_level);
         Queue::assertPushed(FeedPet::class);
     }
 
@@ -207,7 +207,7 @@ class PetCareTest extends TestCase
 
         $response->assertNotFound();
 
-        $this->assertSame(50, $otherPet->fresh()->calorie_level);
+        $this->assertSame(50.0, $otherPet->fresh()->calorie_level);
     }
 
     public function test_team_members_can_return_a_pet(): void

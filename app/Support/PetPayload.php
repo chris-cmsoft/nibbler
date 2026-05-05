@@ -14,7 +14,7 @@ class PetPayload
      *     id: int,
      *     name: string,
      *     birthday: string,
-     *     calorieLevel: int,
+     *     calorieLevel: float,
      *     attentionLevel: int,
      *     animal: array{
      *         id: int,
@@ -34,7 +34,7 @@ class PetPayload
             'id' => $pet->id,
             'name' => $pet->name,
             'birthday' => $pet->birthday->toDateString(),
-            'calorieLevel' => $pet->calorie_level,
+            'calorieLevel' => (float) $pet->calorie_level,
             'attentionLevel' => $pet->attention_level,
             'animal' => [
                 'id' => $pet->animal->id,
