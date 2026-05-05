@@ -58,8 +58,20 @@ useEcho<PetCareUpdated>(`pets.${props.pet.id}`, 'PetCareUpdated', (event) => {
     care.attentionLevel = event.attentionLevel;
 });
 
-function progressWidth(value: number): string {
+function calorieProgressWidth(value: number): string {
+    if (props.pet.animal.caloriesPerDay <= 0) {
+        return '0%';
+    }
+
+    return `${Math.min(100, Math.max(0, (value / props.pet.animal.caloriesPerDay) * 100))}%`;
+}
+
+function stimulationProgressWidth(value: number): string {
     return `${Math.min(100, Math.max(0, value))}%`;
+}
+
+function formatCalories(value: number): string {
+    return value.toFixed(1);
 }
 </script>
 
@@ -95,13 +107,16 @@ function progressWidth(value: number): string {
                             class="text-muted-foreground"
                             data-test="pet-calories"
                         >
-                            {{ care.calorieLevel }} / 100
+                            {{ formatCalories(care.calorieLevel) }} /
+                            {{ pet.animal.caloriesPerDay }}
                         </span>
                     </div>
                     <div class="h-2 overflow-hidden rounded-full bg-muted">
                         <div
                             class="h-full rounded-full bg-emerald-500"
-                            :style="{ width: progressWidth(care.calorieLevel) }"
+                            :style="{
+                                width: calorieProgressWidth(care.calorieLevel),
+                            }"
                         />
                     </div>
                 </div>
@@ -120,7 +135,9 @@ function progressWidth(value: number): string {
                         <div
                             class="h-full rounded-full bg-sky-500"
                             :style="{
-                                width: progressWidth(care.attentionLevel),
+                                width: stimulationProgressWidth(
+                                    care.attentionLevel,
+                                ),
                             }"
                         />
                     </div>

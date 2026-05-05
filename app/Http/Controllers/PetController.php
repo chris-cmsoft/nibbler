@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\PetCareUpdated;
 use App\Events\PetReturned;
+use App\Jobs\FeedPet;
 use App\Models\Pet;
 use App\Models\Team;
 use App\Support\PetPayload;
@@ -34,13 +35,11 @@ class PetController extends Controller
      */
     public function feed(Team $currentTeam, Pet $pet): RedirectResponse
     {
-        $pet = $this->incrementCareLevel($currentTeam, $pet, 'calorie_level');
+        $pet = $currentTeam->pets()
+            ->whereKey($pet->id)
+            ->firstOrFail();
 
-        broadcast(new PetCareUpdated(
-            petId: $pet->id,
-            calorieLevel: $pet->calorie_level,
-            attentionLevel: $pet->attention_level,
-        ));
+        FeedPet::dispatch($pet->id);
 
         return back();
     }

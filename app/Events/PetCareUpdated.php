@@ -17,7 +17,7 @@ class PetCareUpdated implements ShouldBroadcastNow
      */
     public function __construct(
         public int $petId,
-        public int $calorieLevel,
+        public float $calorieLevel,
         public int $attentionLevel,
     ) {}
 

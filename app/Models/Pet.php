@@ -43,6 +43,7 @@ class Pet extends Model
     {
         return [
             'birthday' => 'date',
+            'calorie_level' => 'float',
         ];
     }
 }

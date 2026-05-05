@@ -16,7 +16,7 @@ class AnimalSeeder extends Seeder
             ['slug' => 'mouse'],
             [
                 'name' => 'Mouse',
-                'calories_per_day' => 100,
+                'calories_per_day' => 300,
                 'attention_points' => 50,
                 'svg_path' => 'resources/animals/mouse.svg',
             ],
