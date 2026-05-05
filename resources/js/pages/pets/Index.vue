@@ -82,7 +82,7 @@ function progressWidth(value: number): string {
                         class="flex aspect-video items-center justify-center rounded-lg border bg-muted/40 p-4"
                     >
                         <img
-                            :src="teamPet.animal.svgPath"
+                            :src="teamPet.animal.svgUrl"
                             :alt="`${teamPet.name} the ${teamPet.animal.name}`"
                             class="h-full max-h-48 w-full object-contain"
                         />

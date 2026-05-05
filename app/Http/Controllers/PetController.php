@@ -6,6 +6,7 @@ use App\Models\Pet;
 use App\Models\Team;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Vite;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -32,6 +33,7 @@ class PetController extends Controller
                         'caloriesPerDay' => $pet->animal->calories_per_day,
                         'attentionPoints' => $pet->animal->attention_points,
                         'svgPath' => $pet->animal->svg_path,
+                        'svgUrl' => Vite::asset($pet->animal->svg_path),
                     ],
                 ]),
         ]);

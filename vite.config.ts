@@ -10,6 +10,7 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
+            assets: ['resources/animals/**'],
             refresh: true,
             fonts: [
                 bunny('Instrument Sans', {

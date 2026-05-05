@@ -3,6 +3,7 @@ export type Animal = {
     caloriesPerDay: number;
     attentionPoints: number;
     svgPath: string;
+    svgUrl: string;
 };
 
 export type Pet = {

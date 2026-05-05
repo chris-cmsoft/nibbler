@@ -25,7 +25,7 @@ class AnimalFactory extends Factory
             'name' => ucfirst($name),
             'calories_per_day' => fake()->numberBetween(50, 200),
             'attention_points' => fake()->numberBetween(25, 100),
-            'svg_path' => '/animals/'.Str::slug($name).'.svg',
+            'svg_path' => 'resources/animals/'.Str::slug($name).'.svg',
         ];
     }
 }

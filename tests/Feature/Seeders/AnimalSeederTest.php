@@ -20,7 +20,7 @@ class AnimalSeederTest extends TestCase
             'name' => 'Mouse',
             'calories_per_day' => 100,
             'attention_points' => 50,
-            'svg_path' => '/animals/mouse.svg',
+            'svg_path' => 'resources/animals/mouse.svg',
         ]);
     }
 
@@ -31,7 +31,7 @@ class AnimalSeederTest extends TestCase
             'name' => 'Old Mouse',
             'calories_per_day' => 5,
             'attention_points' => 5,
-            'svg_path' => '/animals/old-mouse.svg',
+            'svg_path' => 'resources/animals/old-mouse.svg',
         ]);
 
         $this->seed(AnimalSeeder::class);
@@ -42,7 +42,7 @@ class AnimalSeederTest extends TestCase
             'name' => 'Mouse',
             'calories_per_day' => 100,
             'attention_points' => 50,
-            'svg_path' => '/animals/mouse.svg',
+            'svg_path' => 'resources/animals/mouse.svg',
         ]);
     }
 }
