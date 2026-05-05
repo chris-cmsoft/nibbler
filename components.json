@@ -8,6 +8,13 @@
         "cssVariables": true,
         "prefix": ""
     },
+    "scripts": {
+        "post-update-cmd": [
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+            "@php artisan ide-helper:generate",
+            "@php artisan ide-helper:meta"
+        ]
+    },
     "aliases": {
         "components": "@/components",
         "composables": "@/composables",
