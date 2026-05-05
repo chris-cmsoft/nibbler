@@ -33,6 +33,10 @@ Fulfillment changes through attention. Petting an animal increases fulfillment, 
 
 Teams can configure feeding schedules from the UI. When a schedule is due, Laravel's scheduler should add a feed job to the queue. The queue worker then processes that job and applies the feeding behavior to the pet.
 
+Feeding jobs should take three minutes of real time to complete. Instead of adding all calories at once, a job should increment the pet's calorie counter a little bit every few seconds and broadcast those updates to the frontend as it works. In the product metaphor this avoids gluttony, but the main purpose is to showcase longer-running queue jobs and make their progress visible in the UI.
+
+Because each feeding job occupies a worker for the full three minutes, other pets should wait for food when the queue is backed up. Scaling up queue workers should make that waiting time shrink, giving the demo a concrete way to show how worker capacity affects queued work.
+
 This flow is intentionally part of the demo: users should be able to see that scheduled work and queued work are separate steps that cooperate to keep the pets cared for.
 
 ## Realtime Collaboration
