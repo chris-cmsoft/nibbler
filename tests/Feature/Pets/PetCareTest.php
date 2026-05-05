@@ -79,8 +79,8 @@ class PetCareTest extends TestCase
 
         $this->assertSame(50, $pet->fresh()->calorie_level);
         Queue::assertPushed(FeedPet::class, fn (FeedPet $job) => $job->petId === $pet->id
-            && $job->calories === 10
-            && $job->durationSeconds === 180);
+            && $job->calories === 100
+            && $job->durationSeconds === 60);
     }
 
     public function test_feed_action_does_not_run_the_job_inline(): void

@@ -27,8 +27,8 @@ class FeedPet implements ShouldQueue
      */
     public function __construct(
         public int $petId,
-        public int $calories = 10,
-        public int $durationSeconds = 180,
+        public int $calories = 100,
+        public int $durationSeconds = 60,
     ) {}
 
     /**
@@ -37,13 +37,13 @@ class FeedPet implements ShouldQueue
     public function handle(): void
     {
         $calories = max(1, $this->calories);
-        $intervalSeconds = $this->durationSeconds > 0
-            ? max(1, (int) round($this->durationSeconds / $calories))
+        $intervalMicroseconds = $this->durationSeconds > 0
+            ? max(1, (int) round(($this->durationSeconds / $calories) * 1_000_000))
             : 0;
 
         for ($calorie = 0; $calorie < $calories; $calorie++) {
-            if ($intervalSeconds > 0) {
-                sleep($intervalSeconds);
+            if ($intervalMicroseconds > 0) {
+                usleep($intervalMicroseconds);
             }
 
             $pet = $this->feedOneCalorie();
@@ -67,6 +67,7 @@ class FeedPet implements ShouldQueue
     {
         return DB::transaction(function (): ?Pet {
             $pet = Pet::query()
+                ->with('animal')
                 ->whereKey($this->petId)
                 ->lockForUpdate()
                 ->first();
@@ -76,7 +77,7 @@ class FeedPet implements ShouldQueue
             }
 
             $pet->update([
-                'calorie_level' => min(100, $pet->calorie_level + 1),
+                'calorie_level' => min($pet->animal->calories_per_day, $pet->calorie_level + 1),
             ]);
 
             return $pet;
