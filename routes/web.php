@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdoptionController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Middleware\EnsureTeamMembership;
@@ -17,6 +18,10 @@ Route::prefix('{current_team}')
         Route::get('pets', [PetController::class, 'index'])->name('pets.index');
         Route::post('pets/{pet}/feed', [PetController::class, 'feed'])->name('pets.feed');
         Route::post('pets/{pet}/pet', [PetController::class, 'pet'])->name('pets.pet');
+        Route::delete('pets/{pet}', [PetController::class, 'destroy'])->name('pets.destroy');
+
+        Route::get('adoptions', [AdoptionController::class, 'index'])->name('adoptions.index');
+        Route::post('adoptions/{animal}', [AdoptionController::class, 'store'])->name('adoptions.store');
     });
 
 Route::middleware(['auth'])->group(function () {

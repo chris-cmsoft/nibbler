@@ -4,6 +4,7 @@ namespace Tests\Feature\Pets;
 
 use App\Enums\TeamRole;
 use App\Events\PetCareUpdated;
+use App\Events\PetReturned;
 use App\Models\Pet;
 use App\Models\Team;
 use App\Models\User;
@@ -145,6 +146,39 @@ class PetCareTest extends TestCase
         $response->assertForbidden();
     }
 
+    public function test_team_members_can_authorize_team_private_channels(): void
+    {
+        $this->useReverbBroadcasting();
+
+        [$user, $team] = $this->userAndTeam();
+
+        $response = $this
+            ->actingAs($user)
+            ->post('/broadcasting/auth', [
+                'socket_id' => '1234.5678',
+                'channel_name' => "private-teams.{$team->id}",
+            ]);
+
+        $response->assertOk();
+    }
+
+    public function test_non_team_members_cannot_authorize_team_private_channels(): void
+    {
+        $this->useReverbBroadcasting();
+
+        $user = User::factory()->create();
+        $team = Team::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->post('/broadcasting/auth', [
+                'socket_id' => '1234.5678',
+                'channel_name' => "private-teams.{$team->id}",
+            ]);
+
+        $response->assertForbidden();
+    }
+
     public function test_pet_caps_stimulation_at_one_hundred(): void
     {
         [$user, $team] = $this->userAndTeam();
@@ -171,6 +205,38 @@ class PetCareTest extends TestCase
         $this->assertSame(50, $otherPet->fresh()->calorie_level);
     }
 
+    public function test_team_members_can_return_a_pet(): void
+    {
+        Event::fake([PetReturned::class]);
+
+        [$user, $team] = $this->userAndTeam();
+        $pet = Pet::factory()->for($team)->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->delete(route('pets.destroy', ['current_team' => $team, 'pet' => $pet]));
+
+        $response->assertRedirect();
+        $this->assertModelMissing($pet);
+        Event::assertDispatched(PetReturned::class, fn (PetReturned $event) => $event->teamId === $team->id
+            && $event->petId === $pet->id
+            && $event->actorName === $user->name
+            && $event->petName === $pet->name);
+    }
+
+    public function test_return_pet_cannot_delete_another_teams_pet(): void
+    {
+        [$user, $team] = $this->userAndTeam();
+        $otherPet = Pet::factory()->create();
+
+        $response = $this
+            ->actingAs($user)
+            ->delete(route('pets.destroy', ['current_team' => $team, 'pet' => $otherPet]));
+
+        $response->assertNotFound();
+        $this->assertModelExists($otherPet);
+    }
+
     /**
      * @return array{0: User, 1: Team}
      */
@@ -194,5 +260,6 @@ class PetCareTest extends TestCase
 
         Broadcast::forgetDrivers();
         Broadcast::channel('pets.{pet}', fn (User $user, Pet $pet): bool => $user->teams()->whereKey($pet->team_id)->exists());
+        Broadcast::channel('teams.{teamId}', fn (User $user, int $teamId): bool => $user->teams()->whereKey($teamId)->exists());
     }
 }

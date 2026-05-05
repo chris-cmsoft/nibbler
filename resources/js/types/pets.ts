@@ -1,4 +1,5 @@
 export type Animal = {
+    id: number;
     name: string;
     caloriesPerDay: number;
     attentionPoints: number;

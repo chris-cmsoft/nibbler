@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
 import { useEcho } from '@laravel/echo-vue';
-import { HandHeart, Utensils } from 'lucide-vue-next';
+import { HandHeart, RotateCcw, Utensils } from 'lucide-vue-next';
 import { reactive, watch } from 'vue';
 import {
+    destroy,
     feed,
     pet as petPet,
 } from '@/actions/App/Http/Controllers/PetController';
@@ -16,6 +17,16 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import type { Pet } from '@/types';
 
 type PetCareUpdated = {
@@ -171,6 +182,52 @@ function progressWidth(value: number): string {
                     Pet
                 </Button>
             </Form>
+
+            <Dialog>
+                <DialogTrigger as-child>
+                    <Button variant="outline" data-test="pet-return-button">
+                        <RotateCcw />
+                        Return
+                    </Button>
+                </DialogTrigger>
+
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Return {{ pet.name }}?</DialogTitle>
+                        <DialogDescription>
+                            Are you sure you want to return
+                            <strong>{{ pet.name }}</strong
+                            >? Don't feel too bad. It's only a virtual pet
+                            afterall. 1s and 0s.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <DialogFooter class="gap-2">
+                        <DialogClose as-child>
+                            <Button variant="secondary"> Keep pet </Button>
+                        </DialogClose>
+
+                        <Form
+                            :action="
+                                destroy({
+                                    current_team: currentTeamSlug,
+                                    pet: pet.id,
+                                })
+                            "
+                            #default="{ processing }"
+                        >
+                            <Button
+                                type="submit"
+                                variant="destructive"
+                                :disabled="processing"
+                                data-test="pet-return-confirm-button"
+                            >
+                                Return pet
+                            </Button>
+                        </Form>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </CardFooter>
     </Card>
 </template>

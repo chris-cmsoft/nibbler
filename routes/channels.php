@@ -11,3 +11,7 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('pets.{pet}', function (User $user, Pet $pet): bool {
     return $user->teams()->whereKey($pet->team_id)->exists();
 });
+
+Broadcast::channel('teams.{teamId}', function (User $user, int $teamId): bool {
+    return $user->teams()->whereKey($teamId)->exists();
+});
