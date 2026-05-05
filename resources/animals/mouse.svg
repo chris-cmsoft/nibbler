@@ -1,0 +1,101 @@
+<svg viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg" aria-label="Animated cute mouse">
+    <style>
+        .mouse {
+            animation: idle 2.5s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: center bottom;
+        }
+
+        .tail {
+            animation: tailWag 2s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: 72px 178px;
+        }
+
+        .ear {
+            animation: earTwitch 4s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        .eyes {
+            animation: blink 5s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        @keyframes idle {
+            0%, 100% {
+                transform: translateY(0) rotate(-1deg);
+            }
+
+            50% {
+                transform: translateY(-8px) rotate(1deg);
+            }
+        }
+
+        @keyframes tailWag {
+            0%, 100% {
+                transform: rotate(-6deg);
+            }
+
+            50% {
+                transform: rotate(8deg);
+            }
+        }
+
+        @keyframes earTwitch {
+            0%, 88%, 100% {
+                transform: rotate(0);
+            }
+
+            90% {
+                transform: rotate(-8deg);
+            }
+
+            92% {
+                transform: rotate(6deg);
+            }
+        }
+
+        @keyframes blink {
+            0%, 92%, 100% {
+                transform: scaleY(1);
+            }
+
+            94%, 96% {
+                transform: scaleY(0.2);
+            }
+        }
+    </style>
+
+    <g class="mouse">
+        <g class="tail">
+            <path d="M82 177 C18 178 10 120 46 107 C73 97 84 123 62 133" fill="none" stroke="#d79aa8" stroke-width="14" stroke-linecap="round"/>
+        </g>
+        <ellipse cx="170" cy="162" rx="88" ry="62" fill="#d8d8df"/>
+        <ellipse cx="224" cy="143" rx="62" ry="54" fill="#dedee6"/>
+        <g class="ear">
+            <circle cx="198" cy="91" r="33" fill="#d8d8df"/>
+            <circle cx="198" cy="91" r="21" fill="#f3b7c4"/>
+        </g>
+        <g class="ear">
+            <circle cx="252" cy="98" r="29" fill="#d8d8df"/>
+            <circle cx="252" cy="98" r="18" fill="#f3b7c4"/>
+        </g>
+        <ellipse cx="247" cy="153" rx="28" ry="24" fill="#f5f5f7"/>
+        <circle cx="267" cy="154" r="8" fill="#ef8ca4"/>
+        <g class="eyes">
+            <circle cx="224" cy="132" r="6" fill="#333"/>
+            <circle cx="260" cy="135" r="6" fill="#333"/>
+        </g>
+        <g stroke="#555" stroke-width="3" stroke-linecap="round">
+            <path d="M265 160 L306 148"/>
+            <path d="M266 166 L309 166"/>
+            <path d="M265 172 L304 185"/>
+        </g>
+        <path d="M246 169 Q254 177 263 169" fill="none" stroke="#555" stroke-width="4" stroke-linecap="round"/>
+        <ellipse cx="126" cy="212" rx="22" ry="10" fill="#c5c5cc"/>
+        <ellipse cx="215" cy="210" rx="24" ry="10" fill="#c5c5cc"/>
+    </g>
+</svg>

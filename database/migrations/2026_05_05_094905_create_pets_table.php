@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('pets', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('team_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('animal_id')->constrained()->restrictOnDelete();
+            $table->string('name');
+            $table->unsignedTinyInteger('calorie_level')->default(0);
+            $table->unsignedTinyInteger('attention_level')->default(0);
+            $table->date('birthday');
+            $table->timestamps();
+
+            $table->index(['team_id', 'animal_id']);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('pets');
+    }
+};
