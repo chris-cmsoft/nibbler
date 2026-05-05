@@ -1,0 +1,65 @@
+<?php
+
+namespace Tests\Feature\Jobs;
+
+use App\Events\PetCareUpdated;
+use App\Jobs\FeedPet;
+use App\Models\Pet;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
+use Tests\TestCase;
+
+class FeedPetTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_feed_pet_job_is_not_retried(): void
+    {
+        $job = new FeedPet(petId: 1);
+
+        $this->assertSame(1, $job->tries);
+    }
+
+    public function test_feed_pet_adds_calories_one_at_a_time(): void
+    {
+        Event::fake([PetCareUpdated::class]);
+
+        $pet = Pet::factory()->create([
+            'calorie_level' => 50,
+            'attention_level' => 25,
+        ]);
+
+        (new FeedPet($pet->id, calories: 3, durationSeconds: 0))->handle();
+
+        $this->assertSame(53, $pet->fresh()->calorie_level);
+        Event::assertDispatchedTimes(PetCareUpdated::class, 3);
+        Event::assertDispatched(PetCareUpdated::class, fn (PetCareUpdated $event) => $event->petId === $pet->id
+            && $event->calorieLevel === 53
+            && $event->attentionLevel === 25);
+    }
+
+    public function test_feed_pet_caps_calories_at_one_hundred(): void
+    {
+        Event::fake([PetCareUpdated::class]);
+
+        $pet = Pet::factory()->create(['calorie_level' => 98]);
+
+        (new FeedPet($pet->id, calories: 10, durationSeconds: 0))->handle();
+
+        $this->assertSame(100, $pet->fresh()->calorie_level);
+    }
+
+    public function test_feed_pet_exits_when_the_pet_has_been_returned(): void
+    {
+        Event::fake([PetCareUpdated::class]);
+
+        $pet = Pet::factory()->create(['calorie_level' => 50]);
+        $petId = $pet->id;
+
+        $pet->delete();
+
+        (new FeedPet($petId, calories: 10, durationSeconds: 0))->handle();
+
+        Event::assertNotDispatched(PetCareUpdated::class);
+    }
+}

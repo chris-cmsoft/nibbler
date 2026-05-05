@@ -5,6 +5,7 @@ namespace Tests\Feature\Pets;
 use App\Enums\TeamRole;
 use App\Events\PetCareUpdated;
 use App\Events\PetReturned;
+use App\Jobs\FeedPet;
 use App\Models\Pet;
 use App\Models\Team;
 use App\Models\User;
@@ -12,6 +13,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
@@ -62,9 +64,9 @@ class PetCareTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_feed_increments_calories_by_ten(): void
+    public function test_feed_queues_a_slow_feeding_job(): void
     {
-        Event::fake([PetCareUpdated::class]);
+        Queue::fake();
 
         [$user, $team] = $this->userAndTeam();
         $pet = Pet::factory()->for($team)->create(['calorie_level' => 50]);
@@ -75,14 +77,16 @@ class PetCareTest extends TestCase
 
         $response->assertRedirect();
 
-        $this->assertSame(60, $pet->fresh()->calorie_level);
-        Event::assertDispatched(PetCareUpdated::class, fn (PetCareUpdated $event) => $event->petId === $pet->id
-            && $event->calorieLevel === 60
-            && $event->attentionLevel === $pet->attention_level);
+        $this->assertSame(50, $pet->fresh()->calorie_level);
+        Queue::assertPushed(FeedPet::class, fn (FeedPet $job) => $job->petId === $pet->id
+            && $job->calories === 10
+            && $job->durationSeconds === 180);
     }
 
-    public function test_feed_caps_calories_at_one_hundred(): void
+    public function test_feed_action_does_not_run_the_job_inline(): void
     {
+        Queue::fake();
+
         [$user, $team] = $this->userAndTeam();
         $pet = Pet::factory()->for($team)->create(['calorie_level' => 95]);
 
@@ -90,7 +94,8 @@ class PetCareTest extends TestCase
             ->actingAs($user)
             ->post(route('pets.feed', ['current_team' => $team, 'pet' => $pet]));
 
-        $this->assertSame(100, $pet->fresh()->calorie_level);
+        $this->assertSame(95, $pet->fresh()->calorie_level);
+        Queue::assertPushed(FeedPet::class);
     }
 
     public function test_pet_increments_stimulation_by_ten(): void
