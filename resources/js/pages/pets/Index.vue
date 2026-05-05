@@ -2,6 +2,11 @@
 import { Form, Head, usePage } from '@inertiajs/vue3';
 import { HandHeart, Utensils } from 'lucide-vue-next';
 import { computed } from 'vue';
+import {
+    feed,
+    index,
+    pet as petPet,
+} from '@/actions/App/Http/Controllers/PetController';
 import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import {
@@ -12,7 +17,6 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card';
-import { feed, index, pet as petPet } from '@/actions/App/Http/Controllers/PetController';
 import type { Pet, Team } from '@/types';
 
 type Props = {
@@ -86,7 +90,9 @@ function progressWidth(value: number): string {
 
                     <div class="space-y-4">
                         <div class="space-y-2">
-                            <div class="flex items-center justify-between text-sm">
+                            <div
+                                class="flex items-center justify-between text-sm"
+                            >
                                 <span class="font-medium">Calories</span>
                                 <span
                                     class="text-muted-foreground"
@@ -95,16 +101,24 @@ function progressWidth(value: number): string {
                                     {{ teamPet.calorieLevel }} / 100
                                 </span>
                             </div>
-                            <div class="h-2 overflow-hidden rounded-full bg-muted">
+                            <div
+                                class="h-2 overflow-hidden rounded-full bg-muted"
+                            >
                                 <div
                                     class="h-full rounded-full bg-emerald-500"
-                                    :style="{ width: progressWidth(teamPet.calorieLevel) }"
+                                    :style="{
+                                        width: progressWidth(
+                                            teamPet.calorieLevel,
+                                        ),
+                                    }"
                                 />
                             </div>
                         </div>
 
                         <div class="space-y-2">
-                            <div class="flex items-center justify-between text-sm">
+                            <div
+                                class="flex items-center justify-between text-sm"
+                            >
                                 <span class="font-medium">Stimulation</span>
                                 <span
                                     class="text-muted-foreground"
@@ -113,10 +127,16 @@ function progressWidth(value: number): string {
                                     {{ teamPet.attentionLevel }} / 100
                                 </span>
                             </div>
-                            <div class="h-2 overflow-hidden rounded-full bg-muted">
+                            <div
+                                class="h-2 overflow-hidden rounded-full bg-muted"
+                            >
                                 <div
                                     class="h-full rounded-full bg-sky-500"
-                                    :style="{ width: progressWidth(teamPet.attentionLevel) }"
+                                    :style="{
+                                        width: progressWidth(
+                                            teamPet.attentionLevel,
+                                        ),
+                                    }"
                                 />
                             </div>
                         </div>
@@ -124,13 +144,17 @@ function progressWidth(value: number): string {
 
                     <dl class="grid grid-cols-2 gap-3 text-sm">
                         <div class="rounded-lg border p-3">
-                            <dt class="text-muted-foreground">Daily calories</dt>
+                            <dt class="text-muted-foreground">
+                                Daily calories
+                            </dt>
                             <dd class="font-medium">
                                 {{ teamPet.animal.caloriesPerDay }}
                             </dd>
                         </div>
                         <div class="rounded-lg border p-3">
-                            <dt class="text-muted-foreground">Attention need</dt>
+                            <dt class="text-muted-foreground">
+                                Attention need
+                            </dt>
                             <dd class="font-medium">
                                 {{ teamPet.animal.attentionPoints }}
                             </dd>
