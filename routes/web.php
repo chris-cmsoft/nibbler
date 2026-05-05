@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PetController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
@@ -13,7 +14,9 @@ Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
     ->group(function () {
         Route::inertia('dashboard', 'Dashboard')->name('dashboard');
-        Route::inertia('creature', 'Creature')->name('creature');
+        Route::get('pets', [PetController::class, 'index'])->name('pets.index');
+        Route::post('pets/{pet}/feed', [PetController::class, 'feed'])->name('pets.feed');
+        Route::post('pets/{pet}/pet', [PetController::class, 'pet'])->name('pets.pet');
     });
 
 Route::middleware(['auth'])->group(function () {
