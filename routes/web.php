@@ -13,6 +13,7 @@ Route::prefix('{current_team}')
     ->middleware(['auth', 'verified', EnsureTeamMembership::class])
     ->group(function () {
         Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+        Route::inertia('creature', 'Creature')->name('creature');
     });
 
 Route::middleware(['auth'])->group(function () {
