@@ -30,7 +30,9 @@ const page = usePage();
 
 const currentTeam = computed(() => page.props.currentTeam as Team | null);
 const currentTeamSlug = computed(() => currentTeam.value?.slug ?? '');
-const teamChannel = currentTeam.value ? `teams.${currentTeam.value.id}` : 'teams.0';
+const teamChannel = currentTeam.value
+    ? `teams.${currentTeam.value.id}`
+    : 'teams.0';
 const teamPets = ref<Pet[]>([...props.pets]);
 
 watch(

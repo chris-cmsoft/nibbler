@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
 import AppContent from '@/components/AppContent.vue';
 import AppHeader from '@/components/AppHeader.vue';
 import AppShell from '@/components/AppShell.vue';
 import TeamPetActivityToasts from '@/components/TeamPetActivityToasts.vue';
 import { Toaster } from '@/components/ui/sonner';
-import { usePage } from '@inertiajs/vue3';
-import { computed } from 'vue';
 import type { BreadcrumbItem } from '@/types';
 import type { Team } from '@/types/teams';
 
