@@ -7,10 +7,13 @@ use App\Models\Pet;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class FeedPet implements ShouldQueue
 {
     use Queueable;
+
+    private bool $overfeedingLogged = false;
 
     /**
      * The number of seconds the job may run before timing out.
@@ -76,11 +79,35 @@ class FeedPet implements ShouldQueue
                 return null;
             }
 
+            if ($pet->calorie_level >= $pet->animal->calories_per_day) {
+                $this->logOverfeeding($pet);
+            }
+
             $pet->update([
                 'calorie_level' => round(min($pet->animal->calories_per_day, $pet->calorie_level + 1), 4),
             ]);
 
             return $pet;
         });
+    }
+
+    private function logOverfeeding(Pet $pet): void
+    {
+        if ($this->overfeedingLogged) {
+            return;
+        }
+
+        Log::warning('Pet is full, but continued to be fed.', [
+            'pet_id' => $pet->id,
+            'pet_name' => $pet->name,
+            'team_id' => $pet->team_id,
+            'animal_id' => $pet->animal_id,
+            'animal_name' => $pet->animal->name,
+            'calorie_level' => $pet->calorie_level,
+            'daily_calories' => $pet->animal->calories_per_day,
+            'requested_calories' => $this->calories,
+        ]);
+
+        $this->overfeedingLogged = true;
     }
 }
