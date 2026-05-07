@@ -1,0 +1,123 @@
+<svg viewBox="0 0 340 270" xmlns="http://www.w3.org/2000/svg" aria-label="Animated cute pug">
+    <style>
+        .pug {
+            animation: pugBounce 2.8s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: center bottom;
+        }
+
+        .tail {
+            animation: pugTailWiggle 1.4s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: 251px 151px;
+        }
+
+        .ears {
+            animation: pugEarPerk 4.2s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: center 86px;
+        }
+
+        .eyes {
+            animation: pugBlink 5.4s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        .tongue {
+            animation: pugPant 1.8s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: 171px 162px;
+        }
+
+        @keyframes pugBounce {
+            0%, 100% {
+                transform: translateY(0) rotate(-0.7deg);
+            }
+
+            50% {
+                transform: translateY(-6px) rotate(0.7deg);
+            }
+        }
+
+        @keyframes pugTailWiggle {
+            0%, 100% {
+                transform: rotate(-8deg);
+            }
+
+            50% {
+                transform: rotate(10deg);
+            }
+        }
+
+        @keyframes pugEarPerk {
+            0%, 86%, 100% {
+                transform: translateY(0);
+            }
+
+            90% {
+                transform: translateY(-5px);
+            }
+
+            94% {
+                transform: translateY(2px);
+            }
+        }
+
+        @keyframes pugBlink {
+            0%, 92%, 100% {
+                transform: scaleY(1);
+            }
+
+            95%, 97% {
+                transform: scaleY(0.16);
+            }
+        }
+
+        @keyframes pugPant {
+            0%, 100% {
+                transform: scaleY(0.86);
+            }
+
+            50% {
+                transform: scaleY(1.08);
+            }
+        }
+    </style>
+
+    <g class="pug">
+        <ellipse cx="171" cy="223" rx="91" ry="16" fill="#d2b79a" opacity="0.35"/>
+        <g class="tail">
+            <path d="M247 151 C292 117 310 179 268 177 C244 176 248 145 272 150" fill="none" stroke="#caa377" stroke-width="15" stroke-linecap="round"/>
+        </g>
+        <ellipse cx="170" cy="175" rx="85" ry="58" fill="#d7b27f"/>
+        <path d="M93 176 C74 184 72 214 92 229" fill="none" stroke="#bf9568" stroke-width="22" stroke-linecap="round"/>
+        <path d="M247 176 C266 184 268 214 248 229" fill="none" stroke="#bf9568" stroke-width="22" stroke-linecap="round"/>
+        <ellipse cx="170" cy="126" rx="75" ry="68" fill="#dfbd8b"/>
+        <g class="ears">
+            <path d="M111 86 C81 78 67 108 84 135 C96 154 123 139 125 113 Z" fill="#5d4538"/>
+            <path d="M229 86 C259 78 273 108 256 135 C244 154 217 139 215 113 Z" fill="#5d4538"/>
+        </g>
+        <ellipse cx="170" cy="139" rx="45" ry="42" fill="#5f473a"/>
+        <ellipse cx="170" cy="160" rx="32" ry="22" fill="#4d382f"/>
+        <circle cx="153" cy="132" r="18" fill="#6d5346"/>
+        <circle cx="187" cy="132" r="18" fill="#6d5346"/>
+        <g class="eyes">
+            <circle cx="151" cy="128" r="7" fill="#171412"/>
+            <circle cx="189" cy="128" r="7" fill="#171412"/>
+            <circle cx="148" cy="125" r="2.4" fill="#fff7eb"/>
+            <circle cx="186" cy="125" r="2.4" fill="#fff7eb"/>
+        </g>
+        <path d="M144 104 C153 98 163 100 168 107" fill="none" stroke="#7c5c48" stroke-width="5" stroke-linecap="round"/>
+        <path d="M196 104 C187 98 177 100 172 107" fill="none" stroke="#7c5c48" stroke-width="5" stroke-linecap="round"/>
+        <ellipse cx="170" cy="151" rx="10" ry="7" fill="#211816"/>
+        <path d="M157 162 Q170 174 183 162" fill="none" stroke="#211816" stroke-width="4" stroke-linecap="round"/>
+        <path class="tongue" d="M164 166 C164 185 177 185 177 166 Z" fill="#ef8f95"/>
+        <path d="M118 152 C129 159 139 159 150 152" fill="none" stroke="#8f694d" stroke-width="4" stroke-linecap="round"/>
+        <path d="M190 152 C201 159 211 159 222 152" fill="none" stroke="#8f694d" stroke-width="4" stroke-linecap="round"/>
+        <path d="M131 196 L124 232" stroke="#c79d6c" stroke-width="23" stroke-linecap="round"/>
+        <path d="M209 196 L216 232" stroke="#c79d6c" stroke-width="23" stroke-linecap="round"/>
+        <path d="M110 234 H139" stroke="#f4e2c8" stroke-width="6" stroke-linecap="round"/>
+        <path d="M201 234 H230" stroke="#f4e2c8" stroke-width="6" stroke-linecap="round"/>
+    </g>
+</svg>
