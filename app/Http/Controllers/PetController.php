@@ -11,6 +11,7 @@ use App\Support\PetPayload;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -33,11 +34,24 @@ class PetController extends Controller
     /**
      * Feed the given pet.
      */
-    public function feed(Team $currentTeam, Pet $pet): RedirectResponse
+    public function feed(Request $request, Team $currentTeam, Pet $pet): RedirectResponse
     {
         $pet = $currentTeam->pets()
+            ->with('animal')
             ->whereKey($pet->id)
             ->firstOrFail();
+
+        Log::info('Pet manually fed.', [
+            'pet_id' => $pet->id,
+            'pet_name' => $pet->name,
+            'team_id' => $currentTeam->id,
+            'user_id' => $request->user()->id,
+            'animal_id' => $pet->animal_id,
+            'animal_name' => $pet->animal->name,
+            'calorie_level' => $pet->calorie_level,
+            'daily_calories' => $pet->animal->calories_per_day,
+            'requested_calories' => 100,
+        ]);
 
         FeedPet::dispatch($pet->id);
 
@@ -94,6 +108,16 @@ class PetController extends Controller
                 ->whereKey($pet->id)
                 ->lockForUpdate()
                 ->firstOrFail();
+
+            if ($column === 'attention_level' && $pet->attention_level >= 100) {
+                Log::warning('Pet is getting annoyed from too much petting.', [
+                    'pet_id' => $pet->id,
+                    'pet_name' => $pet->name,
+                    'team_id' => $team->id,
+                    'attention_level' => $pet->attention_level,
+                    'requested_attention_points' => 10,
+                ]);
+            }
 
             $pet->update([
                 $column => min(100, $pet->{$column} + 10),

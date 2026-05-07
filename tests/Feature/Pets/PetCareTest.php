@@ -13,8 +13,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Inertia\Testing\AssertableInertia as Assert;
+use Mockery;
 use Tests\TestCase;
 
 class PetCareTest extends TestCase
@@ -81,6 +83,29 @@ class PetCareTest extends TestCase
         Queue::assertPushed(FeedPet::class, fn (FeedPet $job) => $job->petId === $pet->id
             && $job->calories === 100
             && $job->durationSeconds === 60);
+    }
+
+    public function test_feed_logs_manual_feeding(): void
+    {
+        Queue::fake();
+
+        [$user, $team] = $this->userAndTeam();
+        $pet = Pet::factory()->for($team)->create(['calorie_level' => 50]);
+
+        Log::shouldReceive('info')
+            ->once()
+            ->with('Pet manually fed.', Mockery::on(fn (array $context): bool => $context['pet_id'] === $pet->id
+                && $context['pet_name'] === $pet->name
+                && $context['team_id'] === $team->id
+                && $context['user_id'] === $user->id
+                && $context['animal_id'] === $pet->animal_id
+                && $context['calorie_level'] === 50.0
+                && $context['requested_calories'] === 100));
+
+        $this
+            ->actingAs($user)
+            ->post(route('pets.feed', ['current_team' => $team, 'pet' => $pet]))
+            ->assertRedirect();
     }
 
     public function test_feed_action_does_not_run_the_job_inline(): void
@@ -192,6 +217,29 @@ class PetCareTest extends TestCase
         $this
             ->actingAs($user)
             ->post(route('pets.pet', ['current_team' => $team, 'pet' => $pet]));
+
+        $this->assertSame(100, $pet->fresh()->attention_level);
+    }
+
+    public function test_pet_logs_overstimulation_when_already_fully_stimulated(): void
+    {
+        Event::fake([PetCareUpdated::class]);
+
+        [$user, $team] = $this->userAndTeam();
+        $pet = Pet::factory()->for($team)->create(['attention_level' => 100]);
+
+        Log::shouldReceive('warning')
+            ->once()
+            ->with('Pet is getting annoyed from too much petting.', Mockery::on(fn (array $context): bool => $context['pet_id'] === $pet->id
+                && $context['pet_name'] === $pet->name
+                && $context['team_id'] === $team->id
+                && $context['attention_level'] === 100
+                && $context['requested_attention_points'] === 10));
+
+        $this
+            ->actingAs($user)
+            ->post(route('pets.pet', ['current_team' => $team, 'pet' => $pet]))
+            ->assertRedirect();
 
         $this->assertSame(100, $pet->fresh()->attention_level);
     }
