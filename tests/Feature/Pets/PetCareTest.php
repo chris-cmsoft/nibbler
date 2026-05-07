@@ -6,6 +6,7 @@ use App\Enums\TeamRole;
 use App\Events\PetCareUpdated;
 use App\Events\PetReturned;
 use App\Jobs\FeedPet;
+use App\Models\Animal;
 use App\Models\Pet;
 use App\Models\Team;
 use App\Models\User;
@@ -128,7 +129,11 @@ class PetCareTest extends TestCase
         Event::fake([PetCareUpdated::class]);
 
         [$user, $team] = $this->userAndTeam();
-        $pet = Pet::factory()->for($team)->create(['attention_level' => 50]);
+        $animal = Animal::factory()->create(['attention_points' => 120]);
+        $pet = Pet::factory()
+            ->for($team)
+            ->for($animal)
+            ->create(['attention_level' => 50]);
 
         $response = $this
             ->actingAs($user)
@@ -209,16 +214,20 @@ class PetCareTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_pet_caps_stimulation_at_one_hundred(): void
+    public function test_pet_caps_stimulation_at_the_animals_attention_need(): void
     {
         [$user, $team] = $this->userAndTeam();
-        $pet = Pet::factory()->for($team)->create(['attention_level' => 95]);
+        $animal = Animal::factory()->create(['attention_points' => 120]);
+        $pet = Pet::factory()
+            ->for($team)
+            ->for($animal)
+            ->create(['attention_level' => 115]);
 
         $this
             ->actingAs($user)
             ->post(route('pets.pet', ['current_team' => $team, 'pet' => $pet]));
 
-        $this->assertSame(100, $pet->fresh()->attention_level);
+        $this->assertSame(120, $pet->fresh()->attention_level);
     }
 
     public function test_pet_logs_overstimulation_when_already_fully_stimulated(): void
@@ -226,14 +235,19 @@ class PetCareTest extends TestCase
         Event::fake([PetCareUpdated::class]);
 
         [$user, $team] = $this->userAndTeam();
-        $pet = Pet::factory()->for($team)->create(['attention_level' => 100]);
+        $animal = Animal::factory()->create(['attention_points' => 120]);
+        $pet = Pet::factory()
+            ->for($team)
+            ->for($animal)
+            ->create(['attention_level' => 120]);
 
         Log::shouldReceive('warning')
             ->once()
             ->with('Pet is getting annoyed from too much petting.', Mockery::on(fn (array $context): bool => $context['pet_id'] === $pet->id
                 && $context['pet_name'] === $pet->name
                 && $context['team_id'] === $team->id
-                && $context['attention_level'] === 100
+                && $context['attention_level'] === 120
+                && $context['attention_limit'] === 120
                 && $context['requested_attention_points'] === 10));
 
         $this
@@ -241,7 +255,7 @@ class PetCareTest extends TestCase
             ->post(route('pets.pet', ['current_team' => $team, 'pet' => $pet]))
             ->assertRedirect();
 
-        $this->assertSame(100, $pet->fresh()->attention_level);
+        $this->assertSame(120, $pet->fresh()->attention_level);
     }
 
     public function test_pet_actions_cannot_mutate_another_teams_pet(): void

@@ -67,7 +67,11 @@ function calorieProgressWidth(value: number): string {
 }
 
 function stimulationProgressWidth(value: number): string {
-    return `${Math.min(100, Math.max(0, value))}%`;
+    if (props.pet.animal.attentionPoints <= 0) {
+        return '0%';
+    }
+
+    return `${Math.min(100, Math.max(0, (value / props.pet.animal.attentionPoints) * 100))}%`;
 }
 
 function formatCalories(value: number): string {
@@ -128,7 +132,8 @@ function formatCalories(value: number): string {
                             class="text-muted-foreground"
                             data-test="pet-stimulation"
                         >
-                            {{ care.attentionLevel }} / 100
+                            {{ care.attentionLevel }} /
+                            {{ pet.animal.attentionPoints }}
                         </span>
                     </div>
                     <div class="h-2 overflow-hidden rounded-full bg-muted">

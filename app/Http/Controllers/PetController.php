@@ -105,22 +105,28 @@ class PetController extends Controller
     {
         return DB::transaction(function () use ($team, $pet, $column): Pet {
             $pet = $team->pets()
+                ->with('animal')
                 ->whereKey($pet->id)
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            if ($column === 'attention_level' && $pet->attention_level >= 100) {
+            $maximumCareLevel = $column === 'attention_level'
+                ? $pet->animal->attention_points
+                : 100;
+
+            if ($column === 'attention_level' && $pet->attention_level >= $maximumCareLevel) {
                 Log::warning('Pet is getting annoyed from too much petting.', [
                     'pet_id' => $pet->id,
                     'pet_name' => $pet->name,
                     'team_id' => $team->id,
                     'attention_level' => $pet->attention_level,
+                    'attention_limit' => $maximumCareLevel,
                     'requested_attention_points' => 10,
                 ]);
             }
 
             $pet->update([
-                $column => min(100, $pet->{$column} + 10),
+                $column => min($maximumCareLevel, $pet->{$column} + 10),
             ]);
 
             return $pet;
