@@ -16,7 +16,7 @@ configureEcho({
     enabledTransports: ['ws', 'wss'],
 });
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Nibbler';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
