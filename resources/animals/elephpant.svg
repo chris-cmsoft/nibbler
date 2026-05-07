@@ -2,26 +2,26 @@
     <style>
         .elephpant {
             animation: elephpantIdle 3s ease-in-out infinite;
-            transform-box: fill-box;
+            transform-box: view-box;
             transform-origin: center bottom;
         }
 
         .ear-left {
             animation: earLeftFlap 4.5s ease-in-out infinite;
-            transform-box: fill-box;
-            transform-origin: 114px 122px;
+            transform-box: view-box;
+            transform-origin: 132px 130px;
         }
 
         .ear-right {
             animation: earRightFlap 4.5s ease-in-out infinite;
-            transform-box: fill-box;
-            transform-origin: 246px 122px;
+            transform-box: view-box;
+            transform-origin: 228px 130px;
         }
 
         .trunk {
             animation: trunkCurl 3.4s ease-in-out infinite;
-            transform-box: fill-box;
-            transform-origin: 180px 150px;
+            transform-box: view-box;
+            transform-origin: 180px 155px;
         }
 
         .eyes {
@@ -32,11 +32,11 @@
 
         @keyframes elephpantIdle {
             0%, 100% {
-                transform: translateY(0) rotate(-0.6deg);
+                transform: translateY(0);
             }
 
             50% {
-                transform: translateY(-7px) rotate(0.8deg);
+                transform: translateY(-6px);
             }
         }
 
@@ -46,11 +46,11 @@
             }
 
             84% {
-                transform: rotate(-7deg);
+                transform: rotate(-4deg);
             }
 
             90% {
-                transform: rotate(4deg);
+                transform: rotate(2deg);
             }
         }
 
@@ -60,21 +60,21 @@
             }
 
             84% {
-                transform: rotate(7deg);
+                transform: rotate(4deg);
             }
 
             90% {
-                transform: rotate(-4deg);
+                transform: rotate(-2deg);
             }
         }
 
         @keyframes trunkCurl {
             0%, 100% {
-                transform: rotate(-2deg);
+                transform: rotate(-1.5deg);
             }
 
             50% {
-                transform: rotate(5deg) translateY(3px);
+                transform: rotate(2deg) translateY(2px);
             }
         }
 

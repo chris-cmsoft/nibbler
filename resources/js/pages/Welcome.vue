@@ -136,7 +136,6 @@ const petsUrl = computed(() =>
                                 Ready for a new team.
                             </p>
                         </div>
-                        <Heart class="size-5 text-rose-500" />
                     </div>
 
                     <div
