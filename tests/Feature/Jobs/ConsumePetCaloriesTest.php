@@ -21,6 +21,13 @@ class ConsumePetCaloriesTest extends TestCase
         $this->assertSame(3, $job->tries);
     }
 
+    public function test_consume_pet_calories_job_is_tagged_for_horizon(): void
+    {
+        $job = new ConsumePetCalories;
+
+        $this->assertSame(['consume'], $job->tags());
+    }
+
     public function test_consume_pet_calories_uses_one_scheduled_interval_of_daily_calories(): void
     {
         Event::fake([PetCareUpdated::class]);

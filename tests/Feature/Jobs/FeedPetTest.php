@@ -23,6 +23,13 @@ class FeedPetTest extends TestCase
         $this->assertSame(1, $job->tries);
     }
 
+    public function test_feed_pet_job_is_tagged_for_horizon(): void
+    {
+        $job = new FeedPet(petId: 1);
+
+        $this->assertSame(['feed'], $job->tags());
+    }
+
     public function test_feed_pet_adds_calories_one_at_a_time(): void
     {
         Event::fake([PetCareUpdated::class]);
