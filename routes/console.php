@@ -12,3 +12,7 @@ Artisan::command('inspire', function () {
 Schedule::job(new ConsumePetCalories)
     ->everyTenSeconds()
     ->onOneServer();
+
+Schedule::command('horizon:snapshot')
+    ->everyFiveMinutes()
+    ->onOneServer();
