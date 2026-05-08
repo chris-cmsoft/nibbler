@@ -20,6 +20,16 @@ class ConsumePetCalories implements ShouldQueue
     public int $tries = 3;
 
     /**
+     * Get the tags that should be assigned to the job.
+     *
+     * @return array<int, string>
+     */
+    public function tags(): array
+    {
+        return ['consume'];
+    }
+
+    /**
      * Execute the job.
      */
     public function handle(): void
