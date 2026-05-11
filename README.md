@@ -1,4 +1,4 @@
-# Nibbler
+# Nibbler 
 
 Nibbler is a Laravel application for showcasing Laravel Cloud features through a playful, collaborative virtual pet experience. The product goal is to make infrastructure concepts visible and memorable by wrapping them in animated animals, similar in spirit to a Tamagotchi.
 
